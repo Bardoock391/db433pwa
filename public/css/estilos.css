@@ -37,6 +37,13 @@ body {
       border: none;
       padding: 0.5rem;
       background-color: transparent;
+      margin: -20px -50px; 
+      position:relative;
+      top:50%; 
+      left:50%;
+      background-color: blueviolet;
+      width: 400px;
+      margin: 0px 0px;
     }
   
     button:hover {
@@ -103,3 +110,5 @@ body {
       top: 0;
       font-size: var(--altura-etiqueta);
     }
+
+  

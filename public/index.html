@@ -5,15 +5,66 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Videojuegos 2020</title>
 
+    <script>
+      /* invoca a registraServiceWorker instalar la aplicación en el caché del
+       * navegador. No se espera a que termine el registro. */
+      registraServiceWorker();
+      /** Registra un service worker para instalar la aplicación en el
+       * caché del navegador. La palabra reservada async indica que no espera
+       * a que termine y libera el registro de activación que lo llamó. */
+      async function registraServiceWorker() {
+        if ("serviceWorker" in navigator) {
+          try {
+            /* Registra el service worker y espera que termine. El service
+             * worker debe estar en la carpeta public. La palabra await indica
+             * que espera a que termine y solo puede usarse en una función
+             * async. */
+            const registro = await navigator.serviceWorker.register("sw.js");
+            // Registro correcto y se muestra en la consola.
+            console.log("serviceWorker");
+            console.log(registro);
+          } catch (e) {
+            // Hubo un error en el registro.
+            muestraError(e);
+          }
+        }
+      }
+      /** Procesa una excepción y muestra un mensaje de error.
+       * @param {Error} e descripción del error. */
+      function muestraError(e) {
+        console.log(e);
+        alert(e.message);
+      }
+    </script>
+
+    <!-- Ícono para la página web. Debe ponerse en la raíz de la página. -->
+    <link rel="icon" sizes="32x32" href="favicon.ico">
+
+    <!-- Color de la barra de navegación de Chrome en dispositivos móviles. -->
+    <meta name="theme-color" content="#ffcb2d">
+
+    <!-- Configuración de la PWA: Chrome y Edge. -->
+    <link rel="manifest" href="manifest.json">
+
+    <!-- Configuración para Web Clip en Safari. -->
+    <meta name="apple-mobile-web-app-title" content="db433pwa">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="default">
+    <link rel="apple-touch-icon" href="img/icono-2048.png">
+    <link rel="apple-touch-icon" sizes="256x256" href="img/icono-256.png">
+    <link rel="apple-touch-icon" sizes="1024x1024" href="img/icono-1024.png">
+    <link rel="apple-touch-icon" sizes="2048x2048" href="img/icono-2048.png">
+
+
     <!-- update the version number as needed -->
     <script src="/__/firebase/7.15.3/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
-    <!--<script defer src="/__/firebase/7.15.3/firebase-auth.js"></script>
-    <script defer src="/__/firebase/7.15.3/firebase-database.js"></script>
-    <script defer src="/__/firebase/7.15.3/firebase-messaging.js"></script>
-    <script defer src="/__/firebase/7.15.3/firebase-storage.js"></script> -->
+    <script src="/__/firebase/7.15.3/firebase-auth.js"></script>
+    <!-- <script defer src="/__/firebase/7.15.3/firebase-database.js"></script>
+    <script defer src="/__/firebase/7.15.3/firebase-messaging.js"></script> -->
+    <script src="/__/firebase/7.15.3/firebase-storage.js"></script>
     <!-- Agrega el manejo de bases de datos. -->
-    <script src="/__/firebase/7.15.0/firebase-firestore.js"></script>
+    <script src="/__/firebase/7.15.3/firebase-firestore.js"></script>
 
     <!-- Configura la app usando la información del sitio de Firebase. -->
     <script src="/__/firebase/init.js"></script>
@@ -25,21 +76,24 @@
       <header>
         
         <h1>VIDEOJUEGOS 2020</h1>
-
+       
         <button id="agregar" type="button"
-         onclick="alta();">Agregar...</button>
-        <button type="submit">Guardar</button>
+         onclick="alta();">.Agregar.</button>
+        <button type="submit">+Guardar+</button>
         <button id="eliminar" type="button"
-          onclick="elimina();">Eliminar</button>
-
+          onclick="elimina();">-Eliminar-</button>
+        
       </header>
+      <br><br>
       <p><input id="nombre" type="text" placeholder="Nombre del Videojuego" required></p>
+      <br>
       <p><input id="consola" type="text" placeholder="Nombre de la Consola" required></p>
       <ul id="lista">
         <li><progress max="100">Cargando…</progress></li>
       </ul>
       <mi-footer></mi-footer>
     </form>
+
     <script>
       /** Id del objeto seleccionado en la lista. */
       let id = "";
@@ -49,14 +103,14 @@
       function muestraLista() {
         /* Pide todos los registros de la colección "PASATIEMPO" ordenados por
          * el campo "PAS_NOMBRE" de forma ascendente. */
-        firestore.collection("VIDEOJUEGOS").orderBy("PAS_NOMBRE").onSnapshot(
+        firestore.collection("VIDEOJUEGOS").orderBy("VID_NOMBRE").onSnapshot(
           documentos => {
             let inner = "";
             documentos.forEach(doc =>
               inner += /* html */
               `<li>
                 <button type=button onclick="muestra('${cod(doc.id)}')">
-                  ${cod(doc.data().PAS_NOMBRE)}
+                  ${cod(doc.data().VID_NOMBRE)}
                 </button>
               </li>`);
             lista.innerHTML = inner;
@@ -69,14 +123,14 @@
         );
 
 
-        firestore.collection("VIDEOJUEGOS").orderBy("PAS_CONSOLA").onSnapshot(
+        firestore.collection("VIDEOJUEGOS").orderBy("VID_CONSOLA").onSnapshot(
           documentos => {
             let inner = "";
             documentos.forEach(doc =>
               inner += /* html */
               `<li>
                 <button type=button onclick="muestra('${cod(doc.id)}')">
-                  ${cod(doc.data().PAS_CONSOLA)}
+                  ${cod(doc.data().VID_CONSOLA)}
                 </button>
               </li>`);
             lista.innerHTML = inner;
@@ -94,7 +148,7 @@
         eliminar.disabled = true; // Deshabilita el botón "eliminar".
         id = ""; // Pone en blanco el id, porque todavía no agregamos a la BD.
         nombre.value = "";
-        consola.value =""; // Pone en blanco los datos porque todavía no hay.
+        consola.value = ""; // Pone en blanco los datos porque todavía no hay.
       }
       /** Prepara la forma para modificar el documento que corresponde al
        * id seleccionado en el listado.
@@ -109,8 +163,8 @@
           if (doc.exists) {
             id = doc.id;
             let data = doc.data();
-            nombre.value = data.PAS_NOMBRE || "";
-            consola.value = data.PAS_CONSOLA || "";
+            nombre.value = data.VID_NOMBRE || "";
+            consola.value = data.VID_CONSOLA || "";
           } else {
             alert("El Videojuego selecionado no está registrado.");
             alta();
@@ -122,7 +176,7 @@
       async function guarda() {
         try {
           const modelo = {
-            PAS_NOMBRE: nombre.value.trim()
+            VID_NOMBRE: nombre.value.trim()
             //PAS_CONSOLA: consola.value.trim()
           };
           if (id) {
@@ -139,10 +193,10 @@
           procesaError(e);
         }
 
-        try {
+        try { 
           const modelo = {
             //PAS_NOMBRE: nombre.value.trim()
-            PAS_CONSOLA: consola.value.trim()
+            VID_CONSOLA: consola.value.trim()
           };
           if (id) {
             /* Modifica el modelo en la base de datos en base al id y espera a
@@ -188,6 +242,17 @@
                 default: return letra;
               }
             });
+      }
+    </script>
+    
+    <script>
+      try {
+        let app = firebase.app();
+        let apis = ["auth", "firestore", "storage"]
+          .filter(api => typeof app[api] === "function");
+        mensaje.value = `Firebase SDK cargó con: ${apis.join(', ')}`;
+      } catch (e) {
+        muestraError(e);
       }
     </script>
   </body>
