@@ -21,7 +21,7 @@
              * async. */
             const registro = await navigator.serviceWorker.register("sw.js");
             // Registro correcto y se muestra en la consola.
-            console.log("serviceWorker");
+            console.log("Service Worker registrado.");
             console.log(registro);
           } catch (e) {
             // Hubo un error en el registro.
@@ -59,10 +59,10 @@
     <!-- update the version number as needed -->
     <script src="/__/firebase/7.15.3/firebase-app.js"></script>
     <!-- include only the Firebase features as you need -->
-    <script src="/__/firebase/7.15.3/firebase-auth.js"></script>
+    <!--<script src="/__/firebase/7.15.3/firebase-auth.js"></script> -->
     <!-- <script defer src="/__/firebase/7.15.3/firebase-database.js"></script>
     <script defer src="/__/firebase/7.15.3/firebase-messaging.js"></script> -->
-    <script src="/__/firebase/7.15.3/firebase-storage.js"></script>
+    <!--<script src="/__/firebase/7.15.3/firebase-storage.js"></script> -->
     <!-- Agrega el manejo de bases de datos. -->
     <script src="/__/firebase/7.15.3/firebase-firestore.js"></script>
 
@@ -103,7 +103,8 @@
       function muestraLista() {
         /* Pide todos los registros de la colección "PASATIEMPO" ordenados por
          * el campo "PAS_NOMBRE" de forma ascendente. */
-        firestore.collection("VIDEOJUEGOS").orderBy("VID_NOMBRE").onSnapshot(
+        firestore.collection("VIDEOJUEGOS").orderBy("VID_NOMBRE").onSnapshot
+        firestore.collection("VIDEOJUEGOS").orderBy("VID_CONSOLA").onSnapshot(
           documentos => {
             let inner = "";
             documentos.forEach(doc =>
@@ -111,6 +112,9 @@
               `<li>
                 <button type=button onclick="muestra('${cod(doc.id)}')">
                   ${cod(doc.data().VID_NOMBRE)}
+                </button>
+                <button type=button onclick="muestra('${cod(doc.id)}')">
+                  ${cod(doc.data().VID_CONSOLA)}
                 </button>
               </li>`);
             lista.innerHTML = inner;
@@ -120,26 +124,6 @@
             muestraLista();
           }
           
-        );
-
-
-        firestore.collection("VIDEOJUEGOS").orderBy("VID_CONSOLA").onSnapshot(
-          documentos => {
-            let inner = "";
-            documentos.forEach(doc =>
-              inner += /* html */
-              `<li>
-                <button type=button onclick="muestra('${cod(doc.id)}')">
-                  ${cod(doc.data().VID_CONSOLA)}
-                </button>
-              </li>`);
-            lista.innerHTML = inner;
-          },
-
-          e => {
-            procesaError(e);
-            muestraLista();
-          } 
         );
       }
       /** Prepara la forma para capturar un pasatiempo nuevo. */
@@ -176,27 +160,9 @@
       async function guarda() {
         try {
           const modelo = {
-            VID_NOMBRE: nombre.value.trim()
-            //PAS_CONSOLA: consola.value.trim()
-          };
-          if (id) {
-            /* Modifica el modelo en la base de datos en base al id y espera a
-             * que termine. */
-            await firestore.collection("VIDEOJUEGOS").doc(id).set(modelo);
-          } else {
-            /* Agrega el modelo a la base de datos, genera automáticamente el
-             * id y espera a que termine. */
-            await firestore.collection("VIDEOJUEGOS").add(modelo);
-          }
-          alta();
-        } catch (e) {
-          procesaError(e);
-        }
-
-        try { 
-          const modelo = {
-            //PAS_NOMBRE: nombre.value.trim()
+            VID_NOMBRE: nombre.value.trim(),
             VID_CONSOLA: consola.value.trim()
+            //PAS_CONSOLA: consola.value.trim()
           };
           if (id) {
             /* Modifica el modelo en la base de datos en base al id y espera a
