@@ -55,6 +55,11 @@
     <link rel="apple-touch-icon" sizes="1024x1024" href="img/icono-1024.png">
     <link rel="apple-touch-icon" sizes="2048x2048" href="img/icono-2048.png">
 
+    <!-- Menu de Extencion. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+    rel="stylesheet">
+
 
     <!-- update the version number as needed -->
     <script src="/__/firebase/7.15.3/firebase-app.js"></script>
@@ -76,12 +81,16 @@
       <header>
         
         <h1>VIDEOJUEGOS 2020</h1>
+
+        <div class="ext">
        
-        <button id="agregar" type="button"
-         onclick="alta();">.Agregar.</button>
-        <button type="submit">+Guardar+</button>
-        <button id="eliminar" type="button"
-          onclick="elimina();">-Eliminar-</button>
+        <ul id="extension"><button id="agregar" type="button"
+         onclick="alta();" onclick="extension.classList.remove('muestra');">.Agregar.</button></ul>
+         <ul id="extension"><button type="submit" onclick="extension.classList.remove('muestra');">+Guardar+</button></ul>
+         <ul id="extension"><button id="eliminar" type="button"
+          onclick="elimina();" onclick="extension.classList.remove('muestra');">-Eliminar-</button></ul>
+
+        </div>
         
       </header>
       <br><br>
